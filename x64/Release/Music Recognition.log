@@ -1,7 +1,13 @@
 ﻿  Application.cpp
-  DebugAudioRecorder.cpp
+  FFT.cpp
+c:\users\thømas\source\repos\music recognition\music recognition\fft.cpp(11): warning C4244: '=' : conversion de 'sf::Uint64' en 'int', perte possible de données
+c:\users\thømas\source\repos\music recognition\music recognition\fft.cpp(30): warning C4244: '=' : conversion de 'float' en 'int', perte possible de données
+c:\users\thømas\source\repos\music recognition\music recognition\fft.cpp(36): warning C4244: 'argument' : conversion de 'double' en 'float', perte possible de données
+c:\users\thømas\source\repos\music recognition\music recognition\fft.cpp(106): warning C4244: 'argument' : conversion de 'float' en 'unsigned __int64', perte possible de données
+c:\users\thømas\source\repos\music recognition\music recognition\fft.cpp(107): warning C4244: 'argument' : conversion de 'float' en 'unsigned __int64', perte possible de données
+c:\users\thømas\source\repos\music recognition\music recognition\fft.cpp(121): warning C4244: 'initialisation' : conversion de 'const double' en 'int', perte possible de données
   Génération de code en cours
-  0 of 669 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+  2 of 667 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     4 functions had inline decision re-evaluated but remain unchanged
   Fin de la génération du code
