@@ -79,8 +79,6 @@ const sf::SoundBuffer& AudioRecorder::downsample(float newSampleRate) {
 
 	ppBuffer = sf::SoundBuffer(buffer.getBuffer());
 
-
-
 	const unsigned int sampleRate = buffer.getBuffer().getSampleRate()*buffer.getChannelCount();
 
 	const unsigned int scaleFactor = sampleRate / newSampleRate;

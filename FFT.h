@@ -8,6 +8,7 @@
 #include <math.h>
 #include <deque>
 
+/// CONSTANTS POWER OF 2
 #define POW2_10 1024
 #define POW2_11 2048
 #define POW2_12 4096

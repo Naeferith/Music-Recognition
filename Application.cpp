@@ -43,11 +43,11 @@ int main()
 						break;
 					case sf::Keyboard::Numpad0:
 						if (fft != nullptr) delete fft;
-						fft = new FFT(audioRecorder->getRawBuffer(), POW2_14);
+						fft = new FFT(audioRecorder->getRawBuffer(), POW2_14); // <-- Raw audio
 						break;
 					case sf::Keyboard::Numpad1:
 						if (fft != nullptr) delete fft;
-						fft = new FFT(audioRecorder->applyLpf(5000), POW2_14);
+						fft = new FFT(audioRecorder->applyLpf(5000), POW2_14); // <-- Post Processed Audio
 						break;
 					default:
 						break;

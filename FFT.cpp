@@ -7,6 +7,7 @@ FFT::FFT(const SoundBuffer& buffer, int const& _bufferSize) : buffer(buffer)
 	VA2.setPrimitiveType(Lines);
 	VA3.setPrimitiveType(LineStrip);
 
+	//Member affectation
 	sampleRate = buffer.getSampleRate()*buffer.getChannelCount();
 	sampleCount = buffer.getSampleCount();
 	bufferSize = (_bufferSize < sampleCount) ? _bufferSize : sampleCount;
