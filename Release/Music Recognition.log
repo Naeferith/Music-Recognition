@@ -1,0 +1,2 @@
+﻿AudioReader.obj : error LNK2001: symbole externe non résolu "private: static class AudioReader * AudioReader::instance" (?instance@AudioReader@@0PAV1@A)
+C:\Users\Thømas\source\repos\Music Recognition\Release\Music Recognition.exe : fatal error LNK1120: 1 externes non résolus

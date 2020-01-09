@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Fichiers sources\Audio">
+      <UniqueIdentifier>{7770f8ce-37d9-4fcf-a3fe-0fd798430a0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Visual">
+      <UniqueIdentifier>{911317e2-65bf-41bd-935e-95f86747371d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\DSPFilters">
+      <UniqueIdentifier>{fef8d430-d951-40bf-b2c8-a8ed321c10e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\DSPFilters">
+      <UniqueIdentifier>{49c26fb9-1939-4695-9afc-a580aff42098}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Application.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioRecorder.cpp">
+      <Filter>Fichiers sources\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Fichiers sources\Visual</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugAudioRecorder.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="FFT.cpp">
+      <Filter>Fichiers sources\Visual</Filter>
+    </ClCompile>
+    <ClCompile Include="Bessel.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="Biquad.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="Butterworth.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="Cascade.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="ChebyshevI.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="ChebyshevII.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="Custom.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="Design.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="Elliptic.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="Param.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="PoleFilter.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="RBJ.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="RootFinder.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+    <ClCompile Include="Filter.cpp">
+      <Filter>Fichiers sources\DSPFilters</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioRecorder.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugAudioRecorder.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="FFT.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Bessel.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Biquad.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Butterworth.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Cascade.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="ChebyshevI.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="ChebyshevII.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Custom.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Design.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Dsp.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Elliptic.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Filter.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Layout.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Legendre.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Params.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="PoleFilter.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="RBJ.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="RootFinder.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="SmoothedFilter.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+    <ClInclude Include="MathSupplement.h">
+      <Filter>Fichiers d%27en-tête\DSPFilters</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
