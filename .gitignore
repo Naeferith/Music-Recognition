@@ -35,3 +35,8 @@
 *.vcxproj
 *.filters
 *.user
+
+# Logs and Binaries
+*.log
+*.tlog
+*.pdb
