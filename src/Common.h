@@ -47,6 +47,7 @@ THE SOFTWARE.
 //#include <assert.h>
 #include <stdlib.h>
 
+#include <algorithm>
 #include <cassert>
 #include <cfloat>
 #include <cmath>

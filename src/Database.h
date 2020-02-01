@@ -25,7 +25,7 @@ private:
 
 	void generateDatabase();
 
-	void computeSong(const std::experimental::filesystem::path& path, int songId);
+	bool computeSong(const std::experimental::filesystem::path& path, int songId);
 public:
 	/* Le destructeur.*/
 	~Database();

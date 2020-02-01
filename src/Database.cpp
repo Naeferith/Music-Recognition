@@ -75,7 +75,7 @@ void Database::generateDatabase() {
 	//On va chercher les chasons dans leur répertoire
 	int index = 0;
 	for (const auto& entry : experimental::filesystem::directory_iterator("Database/Songs")) {
-		computeSong(entry.path(), index++);
+		if (computeSong(entry.path(), index)) index++;
 	}
 	cout << "Database Succesfully Loaded. Writing in files..." << endl;
 
@@ -94,7 +94,7 @@ void Database::generateDatabase() {
 	fhashes.close();
 }
 
-void Database::computeSong(const std::experimental::filesystem::path & path, int songId)
+bool Database::computeSong(const std::experimental::filesystem::path & path, int songId)
 {
 	//Le fichier est bien un fichier audio géré
 	if (path.extension() == SONGEXT) {
@@ -115,7 +115,10 @@ void Database::computeSong(const std::experimental::filesystem::path & path, int
 		ModelFFT fft = ModelFFT(buffer->getPpBuffer(), POW2_10);
 		fft.load(hashes, songId);
 		songs.emplace_back(path.stem().string());
+
+		return true;
 	}
+	return false;
 }
 
 
