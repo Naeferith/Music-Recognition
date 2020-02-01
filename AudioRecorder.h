@@ -12,7 +12,7 @@ class AudioRecorder
 		static AudioRecorder* instance;
 		DebugAudioRecorder buffer;
 
-		sf::SoundBuffer ppBuffer;
+		sf::SoundBuffer fileBuffer, ppBuffer;
 		bool ppDone;
 
 		bool recording;
@@ -36,7 +36,10 @@ class AudioRecorder
 		void toogleState();
 
 		//Wrapper
-		const sf::SoundBuffer& getRawBuffer();
+		const sf::SoundBuffer& getRawBuffer() const;
+
+		//wrapper
+		const sf::SoundBuffer& getPpBuffer() const;
 
 		/* Applique un filtre passe-bas sur le buffer enregistré*/
 		const sf::SoundBuffer& applyLpf(float lpfCuttof);
@@ -44,7 +47,11 @@ class AudioRecorder
 		/* Réduit la fréquence d'échantillonage du buffer enregistré*/
 		const sf::SoundBuffer& downsample(float newSampleRate);
 
+		/* Transforme le signal en signal mono*/
+		const sf::SoundBuffer& toMono();
+
 		/* Applique le traitement de conversion d'un son qualité CD vers un son qualité Téléphone. */ //Le résultat est enregistré dans le membre ppBuffer.
 		void computePostProcessing();
 		
+		bool loadBufferFromFile(const string& path);
 };

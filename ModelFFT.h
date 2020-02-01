@@ -1,12 +1,13 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <complex>
 #include <valarray>
 #include <math.h>
-#include <deque>
+#include <map>
+
+#include "DataPoint.h"
 
 /// CONSTANTS POWER OF 2
 #define POW2_10 1024
@@ -16,7 +17,7 @@
 #define POW2_14 16384
 #define POW2_15 32768
 
-const double PI = 3.141592653589793238460;
+const double MPI = 3.141592653589793238460;
 
 using namespace std;
 using namespace sf;
@@ -24,25 +25,8 @@ using namespace sf;
 typedef complex<double> Complex;
 typedef valarray<Complex> CArray;
 
-class FFT
-{
-public:
-	FFT(const SoundBuffer& buffer,int const& _bufferSize);
 
-	void hammingWindow();
-	void fft(CArray &x); //Implementation of the radix 2 Cooley–Tukey algorithm
-	void update();
-
-	void bars(float const& max);
-	void lines(float const& max);
-
-	void draw(RenderWindow &window);
-
-	void printMagnitudes();
-	void computeKeyPoints(CArray& data);
-
-	Sound sound;
-
+class ModelFFT {
 private:
 	SoundBuffer buffer;
 
@@ -50,19 +34,27 @@ private:
 	vector<float> window;
 	CArray bin;
 
-	VertexArray VA1;
-	VertexArray VA2;
-	VertexArray VA3;
-	deque<Vertex> cascade;
-	
 	int sampleRate;
 	int sampleCount;
 	int bufferSize;
 	int mark;
 
 	static const vector<int> RANGE;
-	static const int FUZZ_FACTOR;
 	static int getIndex(int freq);
 	static long long hashRVR(vector<int>& filter);
-};
 
+	long long computeKeyPoints(CArray& data);
+
+	/* Offset en secondes*/
+	void hammingWindow(float offset);
+	void fft(CArray &x); //Implementation of the radix 2 Cooley–Tukey algorithm
+public:
+	ModelFFT(const SoundBuffer& buffer, int const& _bufferSize);
+
+	
+	void load(map<long long, vector<DataPoint>>& hashes, int songId);
+
+	int compare();
+	
+	static int stepCompare(const sf::Int16 * samples, std::size_t sampleCount, int const& _bufferSize);
+};

@@ -27,25 +27,30 @@ void AudioRecorder::toogleState() {
 		buffer.stop();
 		recording = false;
 	}
-	else recording = buffer.start();
+	else recording = buffer.start(11025);
 }
 
-const sf::SoundBuffer & AudioRecorder::getRawBuffer()
+const sf::SoundBuffer & AudioRecorder::getRawBuffer() const
 {
 	return buffer.getBuffer();
+}
+
+const sf::SoundBuffer & AudioRecorder::getPpBuffer() const
+{
+	return ppBuffer;
 }
 
 const sf::SoundBuffer & AudioRecorder::applyLpf(float lpfCuttof)
 {
 	//Initialize the PPbuffer
-	ppBuffer = sf::SoundBuffer();
+	//ppBuffer = sf::SoundBuffer();
 
-	const unsigned int sampleRate = buffer.getBuffer().getSampleRate()*buffer.getChannelCount();
+	const unsigned int sampleRate = ppBuffer.getSampleRate()*ppBuffer.getChannelCount();
 	const float deltaCoef = 1 / sampleRate;
-	const sf::Uint64 nbSamples = buffer.getBuffer().getSampleCount();
+	const sf::Uint64 nbSamples = ppBuffer.getSampleCount();
 
 	//Working sample collection (RBJ using float values)
-	vector<float> tmpfArray(buffer.getBuffer().getSamples(), buffer.getBuffer().getSamples() + nbSamples);
+	vector<float> tmpfArray(ppBuffer.getSamples(), ppBuffer.getSamples() + nbSamples);
 
 	///Apply LFP
 	//Channels (at this point, we should work with a mono PCM signal)
@@ -70,16 +75,16 @@ const sf::SoundBuffer & AudioRecorder::applyLpf(float lpfCuttof)
 	}
 
 	//Load in buffer
-	ppBuffer.loadFromSamples(ppData.data(), tmpfArray.size(), buffer.getChannelCount(), buffer.getSampleRate());
+	ppBuffer.loadFromSamples(ppData.data(), tmpfArray.size(), ppBuffer.getChannelCount(), ppBuffer.getSampleRate());
 
 	return ppBuffer;
 }
 
 const sf::SoundBuffer& AudioRecorder::downsample(float newSampleRate) {
 
-	ppBuffer = sf::SoundBuffer(buffer.getBuffer());
+	//ppBuffer = sf::SoundBuffer(fileBuffer);
 
-	const unsigned int sampleRate = buffer.getBuffer().getSampleRate()*buffer.getChannelCount();
+	const unsigned int sampleRate = ppBuffer.getSampleRate()*ppBuffer.getChannelCount();
 
 	const unsigned int scaleFactor = sampleRate / newSampleRate;
 	
@@ -90,11 +95,11 @@ const sf::SoundBuffer& AudioRecorder::downsample(float newSampleRate) {
 	vector<sf::Int16> newSamples = vector<sf::Int16>();
 
 	//Resampling routine
-	for (unsigned int i(0); i < samplesCount; i += scaleFactor) {
+	for (unsigned int i(0); i < samplesCount-scaleFactor; i += scaleFactor) {
 		sf::Int16 meanSample = 0;
 
 		for (unsigned int j(0); j < scaleFactor; j++) {
-			meanSample += legacySamples[scaleFactor*i + j];
+			meanSample += legacySamples[i + j];
 		}
 
 		meanSample /= scaleFactor;
@@ -108,16 +113,48 @@ const sf::SoundBuffer& AudioRecorder::downsample(float newSampleRate) {
 	return ppBuffer;
 }
 
-void AudioRecorder::computePostProcessing() {
-	if (!ppDone) {
-		///Stereo to mono
+const sf::SoundBuffer & AudioRecorder::toMono()
+{
+	const unsigned int chanels = fileBuffer.getChannelCount();
+	if (chanels == 2) {
+		const sf::Int16* samples = fileBuffer.getSamples();
+		const unsigned int samplesCount = fileBuffer.getSampleCount();
 
+		vector<sf::Int16> newSamples;
+		newSamples.resize(samplesCount);
 
-		///LPF
-		applyLpf(5000);
+		for (unsigned i(0); i < samplesCount; i += 4) {
+			short left = *(short*)&samples[i];
+			short right = *(short*)&samples[i + 2];
+			newSamples[i] = (int(left) + right) / 2;
+		}
 
-		///Downsampling
-		downsample(11025);
+		//Remake the buffer
+		ppBuffer = sf::SoundBuffer();
+		ppBuffer.loadFromSamples(newSamples.data(), newSamples.size(), 1, 2*fileBuffer.getSampleRate());
 	}
-	ppDone = true;
+	return ppBuffer;
+}
+
+void AudioRecorder::computePostProcessing() {
+	//Le fichier doit respecter certaines contraintes
+	//Taux d'echantillonage qualité CD (44.1 kHz)
+	//Peut etre indifferament Mono ou Stereo
+
+	cout << "Channels    : " << fileBuffer.getChannelCount() << endl;
+	cout << "Sample rate : " << fileBuffer.getSampleRate() << endl;
+
+	///(1) Conversion en Mono si le fichier et stereo
+	toMono();
+
+	///(2) On applique un filtre passe-bas pour préparer le buffer au downsampling
+	applyLpf(5000);
+
+	///(3) Downsample qualité téléphone (11.025 kHz)
+	downsample(11025);
+}
+
+bool AudioRecorder::loadBufferFromFile(const string & path)
+{
+	return fileBuffer.loadFromFile(path);
 }

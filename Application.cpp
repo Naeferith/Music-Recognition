@@ -2,6 +2,8 @@
 #include <SFML/Audio.hpp>
 #include "AudioRecorder.h"
 #include "FFT.h"
+#include "Database.h"
+#include "ModelFFT.h"
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
@@ -18,9 +20,16 @@ int main()
 	if (sf::SoundBufferRecorder::isAvailable()) {
 		
 		AudioRecorder* audioRecorder = AudioRecorder::getInstance();
+
 		sf::Sound soundPlayer = sf::Sound();
 
+		///LOAD DATABASE // CAN BE LONG
+		Database* BDD = Database::getInstance();
+
 		FFT* fft = nullptr;
+
+		int id = -1;
+		ModelFFT* mfft = nullptr;
 
 		//Window Life Loop
 		while (window.isOpen())
@@ -38,16 +47,30 @@ int main()
 						audioRecorder->toogleState();
 						break;
 					case sf::Keyboard::Enter:
-						soundPlayer.setBuffer(audioRecorder->getRawBuffer());
-						soundPlayer.play();
+						if (fft != nullptr) delete fft;
+						mfft = new ModelFFT(audioRecorder->getRawBuffer(), POW2_10); // <-- Raw audio
+						id = mfft->compare();
+						cout << endl << ((id == -1) ? "Nothing found." : "Best Match : " + BDD->getSongName(id)) << endl;
 						break;
 					case sf::Keyboard::Numpad0:
 						if (fft != nullptr) delete fft;
-						fft = new FFT(audioRecorder->getRawBuffer(), POW2_14); // <-- Raw audio
+						fft = new FFT(audioRecorder->getRawBuffer(), POW2_10); // <-- Raw audio
 						break;
 					case sf::Keyboard::Numpad1:
 						if (fft != nullptr) delete fft;
-						fft = new FFT(audioRecorder->applyLpf(5000), POW2_14); // <-- Post Processed Audio
+						fft = new FFT(audioRecorder->applyLpf(5000), POW2_10); // <-- Post Processed Audio
+						break;
+					/*case sf::Keyboard::Numpad2:
+						if (fft != nullptr) delete fft;
+						fft = new FFT(fileBuffer, POW2_12); // <-- Raw audio
+						//fft->computeKeyPoints();
+						break;*/
+					case sf::Keyboard::Numpad3:
+						if (fft != nullptr) delete fft;
+						audioRecorder->loadBufferFromFile("Database/Songs/ass.wav");
+						audioRecorder->computePostProcessing();
+						fft = new FFT(audioRecorder->getPpBuffer(), POW2_10); // <-- Raw audio
+						//fft->computeKeyPoints();
 						break;
 					default:
 						break;
@@ -55,7 +78,7 @@ int main()
 				}
 			}
 
-			if (fft != nullptr) fft->update();
+			if (fft != nullptr && fft->sound.getStatus() == Sound::Playing) fft->update();
 
 			window.clear();
 			if (fft != nullptr) fft->draw(window);

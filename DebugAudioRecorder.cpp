@@ -1,6 +1,7 @@
 #include "DebugAudioRecorder.h"
 #include <iostream>
 
+#include "ModelFFT.h"
 
 bool DebugAudioRecorder::onStart() {
 	bool ret = SoundBufferRecorder::onStart();
@@ -17,6 +18,9 @@ bool DebugAudioRecorder::onProcessSamples(const sf::Int16 * samples, std::size_t
 {
 	bool ret = SoundBufferRecorder::onProcessSamples(samples, sampleCount);
 	std::cout << sampleCount << " samples." << std::endl;
+
+	//RealTime
+	//ModelFFT myFFT(samples, sampleCount, POW2_10);
 
 	return ret;
 }

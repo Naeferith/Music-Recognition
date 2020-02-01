@@ -1,5 +1,8 @@
 #include "FFT.h"
 
+const vector<int> FFT::RANGE = { 10, 20, 40, 80, 160, 511 };
+const int FFT::FUZZ_FACTOR = 2;
+
 FFT::FFT(const SoundBuffer& buffer, int const& _bufferSize) : buffer(buffer)
 {
 	//Set drawing primitives
@@ -22,7 +25,7 @@ FFT::FFT(const SoundBuffer& buffer, int const& _bufferSize) : buffer(buffer)
 
 	//Audio loading
 	sound.setBuffer(buffer);
-	sound.setLoop(true);
+	//sound.setLoop(true);
 	sound.play();
 }
 
@@ -31,10 +34,10 @@ void FFT::hammingWindow()
 	mark = sound.getPlayingOffset().asSeconds()*sampleRate;
 	if(mark + bufferSize < sampleCount)
 	{
-		for(int i(mark); i < bufferSize+mark; i++)
+		for(int i(mark); i < bufferSize +mark; i++)
 		{
 			sample[i-mark] = Complex(buffer.getSamples()[i]*window[i-mark],0);
-			VA1[i-mark] = Vertex(Vector2f(20.f,250.f)+Vector2f((i-mark)/(float)bufferSize*700,sample[i-mark].real()*0.005f),Color::Color(255,0,0,250));
+			VA1[i-mark] = Vertex(Vector2f(20.f,250.f)+Vector2f((i-mark)/(float)bufferSize *700,sample[i-mark].real()*0.005f),Color::Color(255,0,0,250));
 		}
 	}
 }
@@ -67,6 +70,9 @@ void FFT::update()
 
 	bin = CArray(sample.data(),bufferSize);
 	fft(bin);
+
+	computeKeyPoints(bin);
+
 	float max = 100000000;
 	
 	lines(max);
@@ -81,7 +87,7 @@ void FFT::bars(float const& max)
 		Vector2f samplePosition(log(i)/log(min(bufferSize/2.f,20000.f)),(float)abs(bin[(int)i]));
 
 		//Draw Bars
-		VA2.append(Vertex(position+Vector2f(samplePosition.x*800,-samplePosition.y/max*500),Color::White));
+		VA2.append(Vertex(position+Vector2f(samplePosition.x*800,-samplePosition.y/max*4000),Color::White));
 		VA2.append(Vertex(position+Vector2f(samplePosition.x*800,0),Color::White));
 
 		//Draw Bars Reflection
@@ -127,4 +133,104 @@ void FFT::draw(RenderWindow &window)
 	window.draw(VA1); //Amplitude
 	window.draw(VA3); //FTT shadow
 	window.draw(VA2); //FTT Graph
+}
+
+void FFT::printMagnitudes()
+{
+	for (int i(0); i < bufferSize; i++) cout << log(abs(bin[i])) << endl;
+}
+
+void FFT::computeKeyPoints(CArray& data)
+{
+	vector<double> highscores = vector<double>(RANGE.size(), 0);
+	vector<int> recordPoints = vector<int>(RANGE.size(), 0);
+
+	//foreach bin of frequencies
+	for (int freq(0); freq < data.size() / 2; freq++) {
+		//get the magnitude of the bin
+		double mag = abs(data[freq]);
+
+		//get the band index where this frequency belongs
+		int index = getIndex(freq);
+
+		//store the data if it's the current most powerful magnitude
+		if (mag > highscores[index]) {
+			highscores[index] = mag;
+			recordPoints[index] = freq;
+		}
+	}
+
+	double mean = 0;
+	cout << "---------------- DATA at this time ----------- \nPowerful BINS   : ";
+	for (int j(0); j < highscores.size(); j++) cout << recordPoints[j] << "\t";
+	cout << "\nAmplitude       : ";
+	for (int j(0); j < highscores.size(); j++) {
+		mean += highscores[j];
+		cout << highscores[j] << "\t";
+	}
+
+	cout << "\nAverage Ampl.   : ";
+	cout << mean/highscores.size() << "\n";
+
+	cout << "\nFILTERED FREQ.  : ";
+	vector<int> filter;
+	for (int j(0); j < highscores.size(); j++) if (highscores[j] > mean / highscores.size()) filter.emplace_back(recordPoints[j]);
+	for (auto &bin : filter)
+	{
+		cout << bin << "\t";
+	}
+	cout << endl << "HASH : "<< hashRVR(filter) << endl;
+
+
+
+	/*int nbOfIterations = buffer.getSampleCount()/bufferSize;
+
+	for (int i(0); i < nbOfIterations; i++) {
+
+		vector<double> highscores = vector<double>(RANGE.size(), 0);
+		vector<int> recordPoints = vector<int>(RANGE.size(), 0);
+
+		for (int j(0); j < bufferSize; j++) sample[j] = Complex(buffer.getSamples()[j+i*bufferSize] * window[j], 0);
+
+		CArray lineOfData = CArray(sample.data(), bufferSize);
+		fft(lineOfData);
+
+		//foreach bin of frequencies
+		for (int freq(0); freq < lineOfData.size()/2; freq++) {
+			//get the magnitude of the bin
+			double mag = log(abs(lineOfData[freq]));
+
+			//get the band index where this frequency belongs
+			int index = getIndex(freq);
+
+			//store the data if it's the current most powerful magnitude
+			if (mag > highscores[index]) {
+				highscores[index] = mag;
+				recordPoints[index] = freq;
+			}
+		}
+
+		cout << "Chunk of data No." << i << " : " << endl;
+		for (int j(0); j < highscores.size(); j++) cout << recordPoints[j] << "\t";
+		cout << "\n";
+	}*/
+
+}
+
+int FFT::getIndex(int freq)
+{
+	if (freq > RANGE.back()) return RANGE.back();
+	int i = 0;
+	while (RANGE[i] < freq) i++;
+	return i;
+}
+
+long long FFT::hashRVR(vector<int>& filter)
+{
+	long long hash = 0;
+	for (auto& bin : filter) {
+		int index = getIndex(bin);
+		hash += bin*(long long)pow(1000, index);
+	}
+	return hash;
 }
