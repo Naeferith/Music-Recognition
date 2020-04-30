@@ -72,7 +72,7 @@ void Database::generateDatabase() {
 	if (!fsongs || !fhashes)
 		exit(14);
 
-	//On va chercher les chasons dans leur répertoire
+	//On va chercher les chansons dans leur répertoire
 	int index = 0;
 	for (const auto& entry : experimental::filesystem::directory_iterator("Database/Songs")) {
 		if (computeSong(entry.path(), index)) index++;
