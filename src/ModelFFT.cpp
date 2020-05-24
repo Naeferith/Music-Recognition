@@ -5,6 +5,8 @@
 #include <functional>
 #include "Database.h"
 
+//#define ULTRADEBUGSWAGG
+
 const vector<int> ModelFFT::RANGE = { 10, 20, 40, 80, 160, 511 };
 
 ModelFFT::ModelFFT(const SoundBuffer & buffer, int const & _bufferSize) : buffer(buffer)
@@ -87,6 +89,9 @@ int ModelFFT::compare()
 	const int unitOfTime = 100; //100 milis = 0.1sec
 	const int duration = buffer.getDuration().asMilliseconds();
 
+
+
+#ifndef ULTRADEBUGSWAGG
 	//Calcul des hash sur toute la chanson
 	for (float milis(0); milis < duration; milis += unitOfTime) {
 		//Recuperation des samples en fonction du temps
@@ -97,24 +102,138 @@ int ModelFFT::compare()
 		//Generation du hash et stockage
 		long long hash = computeKeyPoints(bin);
 		if (hashes.find(hash) != hashes.end()) {
+			vector<int> work = vector<int>();
 			for (auto& datapoint : hashes[hash]) {
-				if (matches.find(datapoint.getSongId()) != matches.end()) matches[datapoint.getSongId()]++;
-				else matches[datapoint.getSongId()] = 1;
+				if (std::find(work.begin(), work.end(), datapoint.getSongId()) == work.end()) {
+					if (matches.find(datapoint.getSongId()) != matches.end()) matches[datapoint.getSongId()]++;
+					else matches[datapoint.getSongId()] = 1;
+
+					work.emplace_back(datapoint.getSongId());
+				}
 			}
 		}
 	}
 
 	//---------------------------------
 
+#else // ULTRADEBUGSWAGG
+	map < int, vector<int>> timemap;
+	//map
+	//	first  = songID
+	//	second = timestamps ou le hash apparait
+
+	vector<vector<DataPoint>> res;
+
+	for (int milis(0); milis < duration; milis += unitOfTime) {
+		//Recuperation des samples en fonction du temps
+		hammingWindow(milis / 1000.f);
+		bin = CArray(sample.data(), bufferSize);
+		fft(bin);
+
+		//Generation du hash et stockage
+		long long hash = computeKeyPoints(bin);
+		if (hashes.find(hash) != hashes.end()) {
+			vector<DataPoint> work;
+			for (auto& datapoint : hashes[hash]) {
+				work.push_back(datapoint);
+
+
+
+				/*if (milis == 0) {
+					if (timemap.find(datapoint.getSongId()) != timemap.end()) timemap[datapoint.getSongId()] = { datapoint.getTime() };
+					else timemap[datapoint.getSongId()].emplace_back(datapoint.getTime());
+				}
+				else {
+					epurate(timemap, milis, hash);
+				}*/
+			}
+			res.push_back(work);
+		}
+	}
+
+	//comparaison des timestamps
+
+	pair<int, int> max;
+	max.first = max.second = -1;
+
+	//boucle sur la duree de la capture
+	for (int i(0); i < res.size(); i++) {
+		
+		//res[i] contient tout les dp du hash a ce timestamps
+		//on en fait une copie
+		vector<DataPoint> eligible;
+
+		//Chargement des DP eligibles
+		for (auto& dp : res[i]) {
+			eligible.push_back(dp);
+		}
+
+		//recuperation de la liste la plus longue
+		for (int j(i+1); j < res.size; j++) {
+			int addStamp = (j - i)*unitOfTime;
+
+			for (auto& dp : eligible) {
+				//si dp est absent dans le hash suivant, on purge
+				if (std::find(res[j].begin(), res[j].end(), dp) != res[j].end()) {
+
+				}
+			}
+		}
+	}
+
+
+#endif
+	//---------------------------------
+
 	if (matches.size() == 0) return -1;
 
 	set<pair<int, int>, Comparator> sortedSet(matches.begin(), matches.end(), comp);
+
+	for (auto t : sortedSet) {
+		cout << Database::getInstance()->getSongName(t.first) << " : "<< t.second << "matches."<< endl;
+	}
+
 	return (*(sortedSet.begin())).first;
 }
 
-int ModelFFT::stepCompare(const sf::Int16 * samples, std::size_t sampleCount, int const & _bufferSize)
+int ModelFFT::stepCompare()
 {
 	return 0;
+}
+
+void ModelFFT::epurate(map<int, vector<int>>& start, int offset, long long nextHash) {
+	auto hashes = Database::getInstance()->getHashes();
+	
+	map<int, vector<int>> epuredStart;
+
+	if (hashes.find(nextHash) == hashes.end()) return;
+	//On recupere la liste des timestamps possibles par chansons
+	vector<DataPoint> timestamps = hashes[nextHash];
+
+	//pour chaque chanson trouvée au depart
+	for (auto& entry : start) {
+		bool matchingTimestamp = false;
+
+		//pour chaque possible correspondance
+		for (auto& dp : timestamps) {
+
+			//on verifie qu'on compare bien la meme chanson
+			if (dp.getSongId() == entry.first) {
+
+				//On parcours la liste des ts du depart
+				for (auto& startStamps : entry.second) {
+
+					//Si un ts de depart a une correspondance au viveau du temps, on la garde pour le reste de l'enregistrement
+					if (dp.getTime() == startStamps + offset) {
+						
+						if (epuredStart.find(entry.first) != epuredStart.end()) epuredStart[entry.first] = { startStamps };
+						else epuredStart[entry.first].emplace_back(startStamps);
+					}
+				}
+			}
+		}
+		start = epuredStart;
+	}
 }
 
 long long ModelFFT::computeKeyPoints(CArray & data)

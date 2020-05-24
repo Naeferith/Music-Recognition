@@ -8,6 +8,8 @@
 #include "AudioRecorder.h"
 #include "ModelFFT.h"
 
+#define CLOCK_DEBUG
+
 const string Database::SONGEXT = ".wav";
 
 Database* Database::instance = nullptr;
@@ -29,7 +31,21 @@ Database::Database()
 
 	if (!fsong || !fhashes) {
 		cout << "Failed to open data files." << endl << "Regenerating..." << endl;
+
+#ifdef CLOCK_DEBUG
+#include<chrono>
+		auto start = chrono::high_resolution_clock::now();
+		
 		generateDatabase();
+
+		auto stop = chrono::high_resolution_clock::now();
+		auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+
+		cout << "Database generation in " << duration.count() << " miliseconds" << endl;
+#else
+		generateDatabase();
+#endif // CLOCK_DEBUG
+
 	}
 	else {
 		//Les 2 fichiers sont ouverts : On entamme la déserialization

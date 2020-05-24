@@ -3,6 +3,8 @@
 
 #include "ModelFFT.h"
 
+sf::SoundBuffer DebugAudioRecorder::quickbuffer = sf::SoundBuffer();
+
 bool DebugAudioRecorder::onStart() {
 	bool ret = SoundBufferRecorder::onStart();
 	std::cout << "Start recording..." << std::endl;
@@ -20,7 +22,9 @@ bool DebugAudioRecorder::onProcessSamples(const sf::Int16 * samples, std::size_t
 	std::cout << sampleCount << " samples." << std::endl;
 
 	//RealTime
-	//ModelFFT myFFT(samples, sampleCount, POW2_10);
+	/*if (quickbuffer.loadFromSamples(samples, sampleCount, 1, 11025)) {
+		ModelFFT myFFT(quickbuffer, POW2_10);
+	}*/
 
 	return ret;
 }

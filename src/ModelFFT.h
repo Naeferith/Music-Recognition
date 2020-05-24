@@ -50,11 +50,11 @@ private:
 	void fft(CArray &x); //Implementation of the radix 2 Cooley–Tukey algorithm
 public:
 	ModelFFT(const SoundBuffer& buffer, int const& _bufferSize);
-
 	
 	void load(map<long long, vector<DataPoint>>& hashes, int songId);
 
 	int compare();
 	
-	static int stepCompare(const sf::Int16 * samples, std::size_t sampleCount, int const& _bufferSize);
+	int stepCompare();
+	void epurate(map<int, vector<int>>& start, int offset, long long nextHash);
 };

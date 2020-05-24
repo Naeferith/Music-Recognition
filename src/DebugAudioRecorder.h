@@ -4,6 +4,8 @@
 
 class DebugAudioRecorder : public sf::SoundBufferRecorder
 {
+private:
+	static sf::SoundBuffer quickbuffer;
 public:
 	virtual bool onStart();
 	virtual void onStop();
